@@ -1,4 +1,5 @@
 import requests
+import os
 
 class clashRoyale:
 
@@ -6,7 +7,7 @@ class clashRoyale:
 
         self.headers = headers = {
             'Accept': 'application/json',
-            'authorization': 'Bearer token' # replace token with clash royale api token
+            'authorization': f'Bearer {os.environ["clash-royale-token"]}'
         }
 
     def get_clan(self):

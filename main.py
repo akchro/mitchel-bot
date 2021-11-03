@@ -2,10 +2,9 @@ import discord
 from discord.ext import commands
 import asyncio
 from clashroyaleapi import clashRoyale
+import os
 
 bot = commands.Bot(command_prefix='.')
-
-events = {}
 
 
 @bot.event
@@ -13,14 +12,7 @@ async def on_ready():
     print("Bot is ready")
 
 
-# @bot.event
-# async def on_message(message):
-#     if message.author.id == 622273993843408916:
-#         await message.reply("stfu mitchell")
-#     await bot.process_commands(message)
-
-
-@bot.command()
+@bot.command()  # this command is just to mess with a friend :)
 async def mitchell_spam(ctx):
     for i in range(10):
         await ctx.send("<@622273993843408916>")
@@ -64,4 +56,4 @@ async def ourclan(ctx, *args):
             await ctx.send(embed=embed)
 
 
-bot.run('') #put bot token in here
+bot.run(os.environ["discord-token"])
