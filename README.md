@@ -1,9 +1,11 @@
 #Mitchel Bot
 
-My first discord bot.
+My first discord bot. Using [discord.py](https://github.com/Rapptz/discord.py)
 
 ## Requirements
-At least Python 3.7
+Python 3.8 or higher
+
+A discord application made in the [developer portal](https://discord.com/developers/applications).
 
 ## Note
 This is my first discord bot project and a personal project so some commands

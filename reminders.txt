@@ -1,0 +1,1 @@
+{"24andMe": ["test", "a", "test2"], "doaghie": ["open chest clash royale"]}
