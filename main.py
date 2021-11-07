@@ -58,8 +58,8 @@ async def ourclan(ctx, *args):
 
 
 @bot.command()
-async def create_reminder(ctx, *, reminder: str): # test command:  .create_reminder test      should create a dict with username : reminder
-    username = ctx.message.author.name  # gets the username of the command user
+async def create_reminder(ctx, *, reminder: str):
+    username = ctx.message.author.name
     with open("reminders.txt", "r") as file:
         current_reminders = json.load(file)
     if username not in current_reminders:
@@ -92,9 +92,9 @@ async def reminders(ctx):
 
 
 @bot.command()
-async def clear_reminder(ctx, *, message):  # message = "a"
+async def clear_reminder(ctx, *, message):
     with open("reminders.txt", "r") as f:
-        data = json.load(f)  # data is {"24andMe": ["test", "a", "test2"], "kale": ["send out email"]}
+        data = json.load(f)
     for element in data:
         print(data[element])
         if message in data[element]:
