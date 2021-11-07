@@ -19,7 +19,7 @@ async def mitchell_spam(ctx):
         await asyncio.sleep(1)
 
 
-@bot.command()
+@bot.command() # specific to my clan "Bruh Clan Cool"
 async def ourclan(ctx, *args):
     if len(args) == 0:
         cr = clashRoyale()
