@@ -57,7 +57,7 @@ async def ourclan(ctx, *args):
             await ctx.send(embed=embed)
 
 
-@bot.command()
+@bot.command(aliases=['add_reminder'])
 async def create_reminder(ctx, *, reminder: str):
     username = ctx.message.author.name
     with open("reminders.txt", "r") as file:
@@ -93,18 +93,21 @@ async def reminders(ctx):
 
 @bot.command()
 async def clear_reminder(ctx, *, message):
+    found = False
     with open("reminders.txt", "r") as f:
         data = json.load(f)
     for element in data:
-        print(data[element])
         if message in data[element]:
             data[element].remove(message)
+            await ctx.send(f"Reminder cleared by <@{ctx.message.author.id}>```{message}```")
+            found = True
     for element in list(data.keys()):
         if len(data[element]) == 0:
             del data[element]
     with open("reminders.txt", "w") as f:
         json.dump(data, f)
-    await ctx.send(f"Reminder cleared by <@{ctx.message.author.id}>")
+    if not found:
+        await ctx.send("Reminder not found")
 
 
 bot.run(os.environ["discord-token"])
