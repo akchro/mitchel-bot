@@ -8,6 +8,9 @@ Python 3.8 or higher
 A discord application made in the [developer portal](https://discord.com/developers/applications).
 
 ## Setup
+
+Create a Clash Royale token [here](https://developer.clashroyale.com/#/)
+
 Create a .env file with this structure:
 ```env
 discord_token=TOKENHERE
