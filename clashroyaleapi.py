@@ -1,5 +1,7 @@
 import requests
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 class clashRoyale:
 
@@ -7,7 +9,7 @@ class clashRoyale:
 
         self.headers = headers = {
             'Accept': 'application/json',
-            'authorization': f'Bearer {os.environ["clash-royale-token"]}'
+            'authorization': f'Bearer {os.getenv("clash_royale_token")}'
         }
 
     def get_clan(self):

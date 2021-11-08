@@ -4,6 +4,7 @@ import asyncio
 from clashroyaleapi import clashRoyale
 import os
 import json
+from dotenv import load_dotenv
 
 bot = commands.Bot(command_prefix='.')
 
@@ -27,7 +28,7 @@ async def ourclan(ctx, *args):
         clan_dict = cr.get_clan()
         embed = discord.Embed(
             title='Bruh Clan Cool',
-            description='description',
+            description='Overview of our clan',
             colour=discord.Colour.blue()
 
         )
@@ -109,5 +110,6 @@ async def clear_reminder(ctx, *, message):
     if not found:
         await ctx.send("Reminder not found")
 
-
-bot.run(os.environ["discord-token"])
+load_dotenv()
+discord_token = os.getenv('discord_token')
+bot.run(discord_token)
