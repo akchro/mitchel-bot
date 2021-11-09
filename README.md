@@ -1,4 +1,4 @@
-#Mitchel Bot
+# Mitchel Bot
 
 My first discord bot. Using [discord.py](https://github.com/Rapptz/discord.py)
 
