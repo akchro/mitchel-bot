@@ -11,10 +11,14 @@ A discord application made in the [developer portal](https://discord.com/develop
 
 Create a Clash Royale token [here](https://developer.clashroyale.com/#/)
 
+Create a Twitter developer account to get Twitter's api. [Here](https://developer.twitter.com/apps)
+
 Create a .env file with this structure:
 ```env
-discord_token=TOKENHERE
-clash_royale_token=CLASHTOKENHERE
+discord_token=DISCORDTOKEN
+clash_royale_token=CLASHTOKEN
+twitter_consumer_key=TWITTERKEY
+twitter_consumer_secret=TWITTERSECRET
 ```
 
 ## Note
