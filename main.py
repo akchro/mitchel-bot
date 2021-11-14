@@ -1,11 +1,12 @@
 import discord
 from discord.ext import commands
 import asyncio
-from clashroyaleapi import clashRoyale
+import random
 import os
 import json
 from dotenv import load_dotenv
 import twitterapi
+from clashroyaleapi import clashRoyale
 
 bot = commands.Bot(command_prefix='.')
 
@@ -15,14 +16,14 @@ async def on_ready():
     print("Bot is ready")
 
 
-@bot.command()  # this command is just to mess with a friend :)
+@bot.command(brief='spam mitchell')  # this command is just to mess with a friend :)
 async def mitchell_spam(ctx):
     for i in range(10):
         await ctx.send("<@622273993843408916>")
         await asyncio.sleep(1)
 
 
-@bot.command() # specific to my clan "Bruh Clan Cool"
+@bot.command(brief='get clan info', description='use .ourclan members to get member info') # specific to my clan "Bruh Clan Cool"
 async def ourclan(ctx, *args):
     if len(args) == 0:
         cr = clashRoyale()
@@ -59,7 +60,7 @@ async def ourclan(ctx, *args):
             await ctx.send(embed=embed)
 
 
-@bot.command(aliases=['add_reminder'])
+@bot.command(aliases=['add_reminder'],brief="create reminder")
 async def create_reminder(ctx, *, reminder: str):
     username = ctx.message.author.name
     with open("reminders.txt", "r") as file:
@@ -112,10 +113,37 @@ async def clear_reminder(ctx, *, message):
         await ctx.send("Reminder not found")
 
 
-@bot.command()
+@bot.command(brief="ratio")
 async def ratio(ctx):
     tweet = twitterapi.find_ratio()
     await ctx.send('https://twitter.com/twitter/statuses/' + str(tweet))
+
+@bot.command(brief='use .help addword for more help adding words',
+             description='adds words to the phrase: "name when thing verb"\nname adds a name\nthing adds a thing\nverb adds a verb\n\nex:.addword name poggers')
+async def addword(ctx, word_type, *, word):
+    with open('wordlist.json', 'r') as f:
+        words = json.load(f)
+    if word not in words[word_type]:
+        if word_type == "name":
+            words["name"].append(word)
+            words["thing"].append(word)
+        else:
+            words[word_type].append(word)
+        await ctx.send(f"new {word_type} created")
+    else:
+        await ctx.send(f"{word_type} was already there")
+    with open('wordlist.json', 'w') as f:
+        json.dump(words, f)
+
+
+@bot.command(brief='create a great phrase')
+async def wordsalad(ctx):
+    with open('wordlist.json', 'r') as f:
+        words = json.load(f)
+        name = random.choice(words['name'])
+        thing = random.choice(words['thing'])
+        verb = random.choice(words['verb'])
+    await ctx.send(f"{name} when {thing} {verb}")
 
 
 load_dotenv()
