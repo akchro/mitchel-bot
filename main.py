@@ -23,7 +23,8 @@ async def mitchell_spam(ctx):
         await asyncio.sleep(1)
 
 
-@bot.command(brief='get clan info', description='use .ourclan members to get member info') # specific to my clan "Bruh Clan Cool"
+@bot.command(brief='get clan info',
+             description='use .ourclan members to get member info')  # specific to my clan "Bruh Clan Cool"
 async def ourclan(ctx, *args):
     if len(args) == 0:
         cr = clashRoyale()
@@ -46,7 +47,7 @@ async def ourclan(ctx, *args):
             await ctx.send("This takes a little bit", delete_after=3)
             embed = discord.Embed(
                 title='Top 20 members based on trophies',
-                description='use .clanmember command to search individuals', # clanmember not created yet
+                description='use .clanmember command to search individuals',  # clanmember not created yet
                 colour=discord.Colour.blue()
 
             )
@@ -60,7 +61,7 @@ async def ourclan(ctx, *args):
             await ctx.send(embed=embed)
 
 
-@bot.command(aliases=['add_reminder'],brief="create reminder")
+@bot.command(aliases=['add_reminder'], brief="create reminder")
 async def create_reminder(ctx, *, reminder: str):
     username = ctx.message.author.name
     with open("reminders.txt", "r") as file:
@@ -90,11 +91,12 @@ async def reminders(ctx):
 
     )
     for i in result:
-        embed.add_field(name= f'Reminder by {i}', value= "\n".join(result[i]), inline= False)
+        embed.add_field(name=f'Reminder by {i}', value="\n".join(result[i]), inline=False)
     await ctx.send(embed=embed)
 
 
-@bot.command(brief= 'clears a created reminder', description = 'clears a reminder that you put\n\nex:\n.clearreminder wash dishes         clears the "wash dishes" reminder')
+@bot.command(brief='clears a created reminder',
+             description='clears a reminder that you put\n\nex:\n.clearreminder wash dishes         clears the "wash dishes" reminder')
 async def clear_reminder(ctx, *, message):
     found = False
     with open("reminders.txt", "r") as f:
@@ -117,6 +119,7 @@ async def clear_reminder(ctx, *, message):
 async def ratio(ctx):
     tweet = twitterapi.find_ratio()
     await ctx.send('https://twitter.com/twitter/statuses/' + str(tweet))
+
 
 @bot.command(brief='use .help addword for more help adding words',
              description='adds words to the wordsalad phrase: "name when thing verb"\nname adds a name\nthing adds a thing\nverb adds a verb\n\nex:.addword name poggers')
@@ -146,6 +149,37 @@ async def wordsalad(ctx):
         verb = random.choice(words['verb'])
     await ctx.send(f"{name} when {thing} {verb}")
 
+
+@bot.command(brief='see all wordsalad words')
+async def wordsalads(ctx):
+    with open('wordlist.json', 'r') as f:
+        words = json.load(f)
+        names = words['name']
+        things = words['thing']
+        verbs = words['verb']
+    await ctx.send(f"```py\nNames:\n{names}\n\nThings:\n{things}\n\nVerbs:\n{verbs}```")
+
+
+@bot.command()
+async def delword(ctx, word, *, message):
+    found = False
+    with open('wordlist.json', 'r') as f:
+        data = json.load(f)
+    for element in data:
+        if message in data[element]:
+            data[element].remove(message)
+            await ctx.send(f"{element} cleared by <@{ctx.message.author.id}>```{message}```")
+            found = True
+    with open("wordlist.json", "w") as f:
+        json.dump(data, f)
+    if not found:
+        await ctx.send("Word not found")
+
+
+@bot.command()
+async def github(ctx):
+    await ctx.send("Go check out the repository for this bot! https://github.com/24Chromosones/mitchel-bot")
+#testing if github works
 
 load_dotenv()
 discord_token = os.getenv('discord_token')
