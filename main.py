@@ -80,7 +80,7 @@ def reminder_reader():
     return result
 
 
-@bot.command()
+@bot.command(brief='shows all reminders made')
 async def reminders(ctx):
     result = reminder_reader()
     embed = discord.Embed(
@@ -94,7 +94,7 @@ async def reminders(ctx):
     await ctx.send(embed=embed)
 
 
-@bot.command()
+@bot.command(brief= 'clears a created reminder', description = 'clears a reminder that you put\n\nex:\n.clearreminder wash dishes         clears the "wash dishes" reminder')
 async def clear_reminder(ctx, *, message):
     found = False
     with open("reminders.txt", "r") as f:
@@ -119,14 +119,15 @@ async def ratio(ctx):
     await ctx.send('https://twitter.com/twitter/statuses/' + str(tweet))
 
 @bot.command(brief='use .help addword for more help adding words',
-             description='adds words to the phrase: "name when thing verb"\nname adds a name\nthing adds a thing\nverb adds a verb\n\nex:.addword name poggers')
+             description='adds words to the wordsalad phrase: "name when thing verb"\nname adds a name\nthing adds a thing\nverb adds a verb\n\nex:.addword name poggers')
 async def addword(ctx, word_type, *, word):
     with open('wordlist.json', 'r') as f:
         words = json.load(f)
     if word not in words[word_type]:
         if word_type == "name":
             words["name"].append(word)
-            words["thing"].append(word)
+            if word not in words[word_type]:
+                words["thing"].append(word)
         else:
             words[word_type].append(word)
         await ctx.send(f"new {word_type} created")
