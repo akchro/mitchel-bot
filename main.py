@@ -5,6 +5,7 @@ from clashroyaleapi import clashRoyale
 import os
 import json
 from dotenv import load_dotenv
+import twitterapi
 
 bot = commands.Bot(command_prefix='.')
 
@@ -109,6 +110,13 @@ async def clear_reminder(ctx, *, message):
         json.dump(data, f)
     if not found:
         await ctx.send("Reminder not found")
+
+
+@bot.command()
+async def ratio(ctx):
+    tweet = twitterapi.find_ratio()
+    await ctx.send('https://twitter.com/twitter/statuses/' + str(tweet))
+
 
 load_dotenv()
 discord_token = os.getenv('discord_token')
