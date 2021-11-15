@@ -7,6 +7,7 @@ import json
 from dotenv import load_dotenv
 import twitterapi
 from clashroyaleapi import clashRoyale
+from gifeditor import create_gif
 
 bot = commands.Bot(command_prefix='.')
 
@@ -177,9 +178,48 @@ async def delword(ctx, word, *, message):
 
 
 @bot.command()
+async def addgif(ctx, link):
+    with open('wordlist.json', 'r') as f:
+        words = json.load(f)
+    if link not in words["gif"]:
+        if ".gif" in link:
+            words["gif"].append(link)
+            await ctx.send("gif added")
+        else:
+            await ctx.send("Please add a .gif at the end of your gif link")
+    else:
+        await ctx.send("Link already there")
+    with open('wordlist.json', 'w') as f:
+        json.dump(words, f)
+
+
+@bot.command()
+@commands.max_concurrency(1, per=commands.BucketType.default, wait=False)
+async def gifsalad(ctx):
+    running = True
+    with open('wordlist.json', 'r') as f:
+        words = json.load(f)
+    name = random.choice(words['name'])
+    thing = random.choice(words['thing'])
+    verb = random.choice(words['verb'])
+    gif = random.choice(words["gif"])
+    message = f"{name} when {thing} {verb}"
+    create_gif(gif, message)
+    await ctx.send(file=discord.File('temp.gif'))
+
+
+# @bot.event
+# async def on_command_error(ctx,error):
+#     await ctx.message.delete()
+#     if isinstance(error, commands.MaxConcurrencyReached):
+#         await ctx.author.send('Currently running, retry after the current command is finished')
+
+
+
+@bot.command()
 async def github(ctx):
     await ctx.send("Go check out the repository for this bot! https://github.com/24Chromosones/mitchel-bot")
-#testing if github works
+
 
 load_dotenv()
 discord_token = os.getenv('discord_token')
