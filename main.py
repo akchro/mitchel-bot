@@ -151,18 +151,19 @@ async def wordsalad(ctx):
     await ctx.send(f"{name} when {thing} {verb}")
 
 
-@bot.command(brief='see all wordsalad words')
-async def wordsalads(ctx):
+@bot.command(brief='see all salad words and gifs')
+async def salads(ctx):
     with open('wordlist.json', 'r') as f:
         words = json.load(f)
         names = words['name']
         things = words['thing']
         verbs = words['verb']
-    await ctx.send(f"```py\nNames:\n{names}\n\nThings:\n{things}\n\nVerbs:\n{verbs}```")
+        gifs = words['gif']
+    await ctx.send(f"```py\nNames:\n{names}\n\nThings:\n{things}\n\nVerbs:\n{verbs}\n\nGifs:\n{gifs}```")
 
 
 @bot.command()
-async def delword(ctx, word, *, message):
+async def delsalad(ctx, word, *, message):
     found = False
     with open('wordlist.json', 'r') as f:
         data = json.load(f)
@@ -182,11 +183,11 @@ async def addgif(ctx, link):
     with open('wordlist.json', 'r') as f:
         words = json.load(f)
     if link not in words["gif"]:
-        if ".gif" in link:
+        if "https://" in link:
             words["gif"].append(link)
             await ctx.send("gif added")
         else:
-            await ctx.send("Please add a .gif at the end of your gif link")
+            await ctx.send("Not a link!")
     else:
         await ctx.send("Link already there")
     with open('wordlist.json', 'w') as f:
@@ -196,7 +197,7 @@ async def addgif(ctx, link):
 @bot.command()
 @commands.max_concurrency(1, per=commands.BucketType.default, wait=False)
 async def gifsalad(ctx):
-    running = True
+    processing = await ctx.send("Processing")
     with open('wordlist.json', 'r') as f:
         words = json.load(f)
     name = random.choice(words['name'])
@@ -206,14 +207,13 @@ async def gifsalad(ctx):
     message = f"{name} when {thing} {verb}"
     create_gif(gif, message)
     await ctx.send(file=discord.File('temp.gif'))
+    await processing.delete()
 
-
-# @bot.event
-# async def on_command_error(ctx,error):
-#     await ctx.message.delete()
-#     if isinstance(error, commands.MaxConcurrencyReached):
-#         await ctx.author.send('Currently running, retry after the current command is finished')
-
+@bot.event # gifsalad takes a long time so this prevents anything breaking if multiple people use it
+async def on_command_error(ctx,error):
+    await ctx.message.delete()
+    if isinstance(error, commands.MaxConcurrencyReached):
+        await ctx.send('Currently running, retry after the current command is finished')
 
 
 @bot.command()

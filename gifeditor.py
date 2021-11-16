@@ -2,10 +2,13 @@ import requests
 from PIL import Image, ImageDraw, ImageSequence, ImageFont
 import io
 import textwrap
-
+import os
+from wand.api import library
+from ctypes import c_void_p, c_size_t
+from wand.image import Image as wandimg
 
 def create_gif(link, msg):
-    original = requests.get(link, stream=True)
+    original = requests.get(link + ".gif", stream=True)
     with open("temp.gif", "wb") as f:
         f.write(original.content)
         im = Image.open("temp.gif")
@@ -19,22 +22,31 @@ def create_gif(link, msg):
 
             if len(message) <= 37:
                 bg = Image.new('RGB', (width, height + 60), 'white')
-                bg.paste(frame, (bg.size[0] // 2 - frame.size[0] // 2, bg.size[1] // 2 - frame.size[1] // 2))
+                bg.paste(frame, (bg.size[0] // 2 - frame.size[0] // 2, bg.size[1] - frame.size[1]))
                 frame = bg
                 d = ImageDraw.Draw(frame)
-                d.rectangle((0, 0, width, 60), fill=(255, 255, 255))
-                d.multiline_text((int(20), 20), message, fill=(0, 0, 0), font=font)
+                w, h = d.textsize(message, font=font)
+                d.multiline_text(((width - w)/2, 10), message, fill=(0, 0, 0), font=font)
             else:
                 bg = Image.new('RGB', (width, height + 120), 'white')
                 bg.paste(frame, (bg.size[0] // 2 - frame.size[0] // 2, bg.size[1] // 2 - frame.size[1] // 2))
                 frame = bg
                 message = "\n".join(textwrap.wrap(message, 37))
                 d = ImageDraw.Draw(frame)
-                d.rectangle((0, 0, width, 120), fill=(255, 255, 255))
-                d.multiline_text((int(20), 20), message, fill=(0, 0, 0), font=font)
+                d.multiline_text((int(20), 10), message, fill=(0, 0, 0), font=font)
             del d
             b = io.BytesIO()
             frame.save(b, format="GIF")
             frame = Image.open(b)
             frames.append(frame)
         frames[0].save("./temp.gif", save_all=True, append_images=frames[1:], optimize=True, quality=1)
+    size = os.stat('temp.gif').st_size
+    while size >= 8000000:
+        compressimg = Image.open("temp.gif")
+        cWidth, cHeight = compressimg.size
+        library.MagickSetCompressionQuality.argtypes = [c_void_p, c_size_t]
+        with wandimg(filename="temp.gif") as img:
+            img.resize(width=int(cWidth*0.7), height=int(cHeight*0.7))
+            library.MagickSetCompressionQuality(img.wand, 75)
+            img.save(filename="temp.gif")
+        size = os.stat('temp.gif').st_size
