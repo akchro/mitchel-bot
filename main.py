@@ -130,7 +130,7 @@ async def addword(ctx, word_type, *, word):
     if word not in words[word_type]:
         if word_type == "name":
             words["name"].append(word)
-            if word not in words[word_type]:
+            if word not in words["thing"]:
                 words["thing"].append(word)
         else:
             words[word_type].append(word)
@@ -205,15 +205,20 @@ async def gifsalad(ctx):
     verb = random.choice(words['verb'])
     gif = random.choice(words["gif"])
     message = f"{name} when {thing} {verb}"
-    create_gif(gif, message)
-    await ctx.send(file=discord.File('temp.gif'))
-    await processing.delete()
+    big = create_gif(gif, message)
+    if big != "Big":
+        await ctx.send(file=discord.File('temp.gif'))
+        await processing.delete()
+    else:
+        await ctx.send(f"The gif used is way too big: ```{gif}``` deleting gif from list")
+        with open('wordlist.json', 'r') as f:
+            data = json.load(f)
+        for element in data:
+            if gif in data[element]:
+                data[element].remove(gif)
+        with open("wordlist.json", "w") as f:
+            json.dump(data, f)
 
-@bot.event # gifsalad takes a long time so this prevents anything breaking if multiple people use it
-async def on_command_error(ctx,error):
-    await ctx.message.delete()
-    if isinstance(error, commands.MaxConcurrencyReached):
-        await ctx.send('Currently running, retry after the current command is finished')
 
 
 @bot.command()

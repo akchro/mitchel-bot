@@ -7,6 +7,7 @@ from wand.api import library
 from ctypes import c_void_p, c_size_t
 from wand.image import Image as wandimg
 
+
 def create_gif(link, msg):
     original = requests.get(link + ".gif", stream=True)
     with open("temp.gif", "wb") as f:
@@ -29,11 +30,12 @@ def create_gif(link, msg):
                 d.multiline_text(((width - w)/2, 10), message, fill=(0, 0, 0), font=font)
             else:
                 bg = Image.new('RGB', (width, height + 120), 'white')
-                bg.paste(frame, (bg.size[0] // 2 - frame.size[0] // 2, bg.size[1] // 2 - frame.size[1] // 2))
+                bg.paste(frame, (bg.size[0] // 2 - frame.size[0] // 2, bg.size[1] - frame.size[1]))
                 frame = bg
                 message = "\n".join(textwrap.wrap(message, 37))
                 d = ImageDraw.Draw(frame)
-                d.multiline_text((int(20), 10), message, fill=(0, 0, 0), font=font)
+                w, h = d.textsize(message, font=font)
+                d.multiline_text(((width - w) / 2, 10), message, fill=(0, 0, 0), font=font)
             del d
             b = io.BytesIO()
             frame.save(b, format="GIF")
@@ -41,6 +43,8 @@ def create_gif(link, msg):
             frames.append(frame)
         frames[0].save("./temp.gif", save_all=True, append_images=frames[1:], optimize=True, quality=1)
     size = os.stat('temp.gif').st_size
+    if size >= 20000000:
+        return("Big")
     while size >= 8000000:
         compressimg = Image.open("temp.gif")
         cWidth, cHeight = compressimg.size
