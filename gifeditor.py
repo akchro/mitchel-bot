@@ -9,7 +9,10 @@ from wand.image import Image as wandimg
 
 
 def create_gif(link, msg):
-    original = requests.get(link + ".gif", stream=True)
+    if ".gif" not in link:
+        original = requests.get(link + ".gif", stream=True)
+    else:
+        original = requests.get(link, stream=True)
     with open("temp.gif", "wb") as f:
         f.write(original.content)
         im = Image.open("temp.gif")
